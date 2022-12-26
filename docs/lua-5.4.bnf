@@ -30,18 +30,23 @@ funcname ::= Name {"." Name} [":" Name]
 
 varlist ::= var {"," var}
 
-var ::=  Name | prefixexp "[" exp "]" | prefixexp "." Name
+var ::=  Name | prefixexp ("[" exp "]" | "." Name)
 
 namelist ::= Name {"," Name}
 
 explist ::= exp {"," exp}
 
-exp ::=  "nil" | "false" | "true" | Numeral | LiteralString | "..." |
-        functiondef | prefixexp | tableconstructor | exp binop exp | unop exp
+exp ::=  (simpleexp | unop exp) {binop exp}
 
-prefixexp ::= var | functioncall | "(" exp ")"
+simpleexp ::= "nil" | "false" | "true" | Numeral | LiteralString | "..." | functiondef | prefixexp | tableconstructor
 
-functioncall ::=  prefixexp args | prefixexp ":" Name args
+prefixexp ::= primaryexp {suffixedexp}
+
+suffixedexp ::= ":" Name args | args | "[" exp "]" | "." Name
+
+primaryexp ::= Name | "(" exp ")"
+
+functioncall ::=  prefixexp [":" Name] args
 
 args ::=  "(" [explist] ")" | tableconstructor | LiteralString
 
